@@ -1,0 +1,37 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_IDENTIFIER_LENGTH 50
+%}
+
+%%
+
+[A-Za-z_][A-Za-z0-9_]* {  
+    if (strlen(yytext) > MAX_IDENTIFIER_LENGTH) {
+        printf("Invalid identifier (too long): %s\n", yytext);
+    } else {
+        printf("Valid identifier: %s\n", yytext);
+    }
+}
+
+.                   { printf("Invalid identifier: %s\n", yytext); }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yyin = fopen("identifiervalidation.txt", "r");  
+    if (!yyin) {
+        perror("Failed to open input file");
+        return 1;
+    }
+
+    yylex();  
+
+    fclose(yyin);  
+    return 0;
+}
