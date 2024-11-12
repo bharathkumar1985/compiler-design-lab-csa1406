@@ -1,0 +1,28 @@
+%{
+#include <stdio.h>
+#include <string.h>
+%}
+
+%%
+
+[+\-*/]            { printf("OPERATOR: %s\n", yytext); }  
+.                   { }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yyin = fopen("operatorprint.txt", "r");  
+    if (!yyin) {
+        perror("Failed to open input file");
+        return 1;
+    }
+
+    yylex(); 
+
+    fclose(yyin); 
+    return 0;
+}
