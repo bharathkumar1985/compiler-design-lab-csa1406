@@ -1,0 +1,35 @@
+%{
+#include <stdio.h>
+#include <string.h>
+
+int whitespace_count = 0; 
+int newline_count = 0; 
+%}
+
+%%
+
+[ \t]               { whitespace_count++; }  
+\n                  { newline_count++; }     
+
+.                   { }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yyin = fopen("spaceandline.txt", "r"); 
+    if (!yyin) {
+        perror("Failed to open input file");
+        return 1;
+    }
+
+    yylex();  
+    printf("Whitespace characters: %d\n", whitespace_count-1);
+    printf("Newline characters: %d\n", newline_count+1);
+
+    fclose(yyin);  
+    return 0;
+}
