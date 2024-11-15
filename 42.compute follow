@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define MAX 10
+char prod[MAX][MAX], follow[MAX][MAX];
+int n;
+void addFollow(char symbol, char next) {
+    if (!strchr(follow[symbol - 'A'], next))
+        strncat(follow[symbol - 'A'], &next, 1);
+}
+void findFollow(char symbol) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 2; prod[i][j]; j++) {
+            if (prod[i][j] == symbol) {
+                if (prod[i][j + 1] && !isupper(prod[i][j + 1])) 
+                    addFollow(symbol, prod[i][j + 1]);
+                else if (!prod[i][j + 1] || isupper(prod[i][j + 1])) 
+                    strcat(follow[symbol - 'A'], follow[prod[i][0] - 'A']);
+            }
+        }
+    }
+}
+int main() {
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+    printf("Enter productions (e.g., E=TR):\n");
+    for (int i = 0; i < n; i++) 
+        scanf("%s", prod[i]);
+    follow[prod[0][0] - 'A'][0] = '$';  
+    for (int i = 0; i < n; i++) 
+        findFollow(prod[i][0]);
+    printf("\nFOLLOW sets:\n");
+    for (int i = 0; i < n; i++) 
+        printf("FOLLOW(%c) = { %s }\n", prod[i][0], follow[prod[i][0] - 'A']);
+    return 0;
+}
